@@ -1,2 +1,0 @@
-# webest
-Web Automation Tooling
