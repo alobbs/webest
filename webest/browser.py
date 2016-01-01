@@ -61,18 +61,25 @@ def get_default_profile_path(check_config_file=True, with_name=None):
 
 
 def new(profile_path=None, is_mobile=False,
-        load_images=True, win_size=(1280, 800)):
+        load_images=True, size=(1280, 800)):
+    # Get path to profile
     if not profile_path:
         profile_path = get_default_profile_path()
 
-    profile = webdriver.FirefoxProfile(profile_path)
+    assert os.path.isdir(profile_path), "Profile not found"
 
+    # Tweak profile if needed
+    profile = webdriver.FirefoxProfile(profile_path)
     if not load_images:
         profile.set_preference('permissions.default.image', 2)
 
     if is_mobile:
         profile.set_preference("general.useragent.override", MOBILE_AGENT)
 
+    # Instance new browser window
     browser = webdriver.Firefox(profile)
-    browser.set_window_size(*win_size)
+
+    if size:
+        browser.set_window_size(*size)
+
     return browser
