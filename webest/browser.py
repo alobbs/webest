@@ -60,7 +60,7 @@ def get_default_profile_path(check_config_file=True, with_name=None):
     return path
 
 
-def new(profile_path=None, is_mobile=False,
+def new(url=None, profile_path=None, is_mobile=False,
         load_images=True, size=(1280, 800)):
     # Get path to profile
     if not profile_path:
@@ -81,5 +81,8 @@ def new(profile_path=None, is_mobile=False,
 
     if size:
         browser.set_window_size(*size)
+
+    if url:
+        browser.get(url)
 
     return browser
