@@ -9,6 +9,8 @@ PROFILE_DIRS = [
     '~/Library/Application Support/Firefox/Profiles',
 ]
 
+PROFILE_CONF_FILE = "~/.config/webest/firefox_profile"
+
 MOBILE_AGENT = (
     "Mozilla/5.0 (Android 5.1; Tablet; rv:40.0) Gecko/40.0 Firefox/40.0"
 )
@@ -24,10 +26,19 @@ def set_default_profile_path(path):
     default_profile = path
 
 
-def get_default_profile_path(with_name=None):
+def get_default_profile_path(check_config_file=True, with_name=None):
     # Has it been set already?
     if default_profile:
         return default_profile
+
+    # Configuration file
+    if check_config_file:
+        conf_file = os.path.expanduser(PROFILE_CONF_FILE)
+        if os.path.exists(conf_file):
+            with open(conf_file, 'r') as cf:
+                path = cf.readline().strip()
+                set_default_profile_path(path)
+                return path
 
     # Read all potential directories
     globs = [os.path.expanduser(d)+'/*' for d in PROFILE_DIRS]
