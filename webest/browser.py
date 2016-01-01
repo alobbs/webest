@@ -61,7 +61,7 @@ def get_default_profile_path(check_config_file=True, with_name=None):
 
 
 def new(url=None, profile_path=None, is_mobile=False,
-        load_images=True, size=(1280, 800)):
+        load_images=True, size=None):
     # Get path to profile
     if not profile_path:
         profile_path = get_default_profile_path()
@@ -80,6 +80,8 @@ def new(url=None, profile_path=None, is_mobile=False,
     browser = webdriver.Firefox(profile)
 
     if size:
+        assert type(size) == tuple
+        assert len(size) == 2
         browser.set_window_size(*size)
 
     if url:
