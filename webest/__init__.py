@@ -4,3 +4,5 @@ __license__ = 'MIT'
 __email__ = 'alvaro@alobbs.com'
 __author__ = 'Alvaro Lopez Ortega'
 __copyright__ = 'Copyright 2015 Alvaro Lopez Ortega'
+
+from . import browser

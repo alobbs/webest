@@ -1,14 +1,17 @@
+import functools
 import glob
 import os
-import sys
 
 from selenium import webdriver
 
-
 PROFILE_DIRS = [
-    '~/.mozilla/firefox/*',
-    '~/Library/Application Support/Firefox/Profiles/*'
+    '~/.mozilla/firefox',
+    '~/Library/Application Support/Firefox/Profiles',
 ]
+
+MOBILE_AGENT = (
+    "Mozilla/5.0 (Android 5.1; Tablet; rv:40.0) Gecko/40.0 Firefox/40.0"
+)
 
 default_profile = None
 
@@ -22,8 +25,13 @@ def set_default_profile_path(path):
 
 
 def get_default_profile_path(with_name=None):
+    # Has it been set already?
+    if default_profile:
+        return default_profile
+
     # Read all potential directories
-    entries = [glob.glob(d) for d in PROFILE_DIRS]
+    globs = [os.path.expanduser(d)+'/*' for d in PROFILE_DIRS]
+    entries = functools.reduce(lambda x, y: x+y, [glob.glob(d) for d in globs])
 
     # Keep the profile dirs only
     dirs = [f for f in entries if os.path.exists(os.path.join(f, 'prefs.js'))]
@@ -35,7 +43,10 @@ def get_default_profile_path(with_name=None):
 
     # Use the newest
     path = sorted(dirs, key=os.path.getmtime)[0]
+
+    # Set it as default
     set_default_profile_path(path)
+    return path
 
 
 def new(profile_path=None, is_mobile=False,
@@ -49,8 +60,7 @@ def new(profile_path=None, is_mobile=False,
         profile.set_preference('permissions.default.image', 2)
 
     if is_mobile:
-        AGENT = "Mozilla/5.0 (Android 5.1; Tablet; rv:40.0) Gecko/40.0 Firefox/40.0"
-        profile.set_preference("general.useragent.override", AGENT)
+        profile.set_preference("general.useragent.override", MOBILE_AGENT)
 
     browser = webdriver.Firefox(profile)
     browser.set_window_size(*win_size)
