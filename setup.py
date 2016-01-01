@@ -27,6 +27,8 @@ with open('README.rst', 'r', 'utf-8') as f:
     readme = f.read()
 with open('HISTORY.rst', 'r', 'utf-8') as f:
     history = f.read()
+with open('requirements.txt', 'r', 'utf-8') as f:
+    requires = [s.strip() for s in f.read().splitlines()]
 
 setup(
     name='webest',
@@ -37,6 +39,8 @@ setup(
     author_email='alvaro@alobbs.com',
     url='https://github.com/alobbs/webest',
     install_requires=requires,
+    packages=['webest'],
+    package_dir={'webest': 'webest'},
     license='MIT',
     zip_safe=False,
     classifiers=(
