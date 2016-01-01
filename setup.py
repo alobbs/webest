@@ -7,8 +7,10 @@ import sys
 from codecs import open
 
 try:
+    from setuptools import find_packages
     from setuptools import setup
 except ImportError:
+    from distutils.core import find_packages
     from distutils.core import setup
 
 if sys.argv[-1] == 'publish':
@@ -39,8 +41,7 @@ setup(
     author_email='alvaro@alobbs.com',
     url='https://github.com/alobbs/webest',
     install_requires=requires,
-    packages=['webest'],
-    package_dir={'webest': 'webest'},
+    packages=find_packages(),
     license='MIT',
     zip_safe=False,
     classifiers=(
