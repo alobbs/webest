@@ -88,3 +88,9 @@ def new(url=None, profile_path=None, is_mobile=False,
         browser.get(url)
 
     return browser
+
+
+def load(b, url, force=False):
+    if (not force) and (b.current_url == url):
+        return
+    b.get(url)
