@@ -61,7 +61,7 @@ def get_default_profile_path(check_config_file=True, with_name=None):
 
 
 def new(url=None, profile_path=None, is_mobile=False,
-        load_images=True, size=None):
+        load_images=True, size=None, theme=None):
     # Get path to profile
     if not profile_path:
         profile_path = get_default_profile_path()
@@ -75,6 +75,9 @@ def new(url=None, profile_path=None, is_mobile=False,
 
     if is_mobile:
         profile.set_preference("general.useragent.override", MOBILE_AGENT)
+
+    if theme:
+        profile.set_preference("lightweightThemes.selectedThemeID", theme)
 
     # Instance new browser window
     browser = webdriver.Firefox(profile)
