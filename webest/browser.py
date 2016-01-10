@@ -1,6 +1,7 @@
 import functools
 import glob
 import os
+import urllib.request
 
 from selenium import webdriver
 
@@ -77,7 +78,16 @@ def new(url=None, profile_path=None, is_mobile=False,
         profile.set_preference("general.useragent.override", MOBILE_AGENT)
 
     if theme:
+        # Fetch theme
+        url = ("https://versioncheck.addons.mozilla.org/"
+               "en/themes/update-check/%s" % theme)
+        with urllib.request.urlopen(url) as f:
+            raw = f.read()
+
+        # Configure it
         profile.set_preference("lightweightThemes.selectedThemeID", theme)
+        profile.set_preference("lightweightThemes.usedThemes", "[%s]" % (
+                               raw.decode('utf-8')))
 
     # Instance new browser window
     browser = webdriver.Firefox(profile)
