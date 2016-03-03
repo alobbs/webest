@@ -1,9 +1,11 @@
 import functools
 import glob
 import os
-import urllib.request
+import time
 
+import selenium.common
 from selenium import webdriver
+
 
 PROFILE_DIRS = [
     '~/.mozilla/firefox',
@@ -91,7 +93,15 @@ def new(url=None, profile_path=None, is_mobile=False,
     return browser
 
 
-def load(b, url, force=False):
+def load(b, url, force=False, retries=3, retry_timeout=60):
     if (not force) and (b.current_url == url):
         return
-    b.get(url)
+
+    for _try in range(retries):
+        try:
+            return b.get(url)
+        except selenium.common.exceptions.TimeoutException:
+            if _try < retries - 1:
+                time.sleep(retry_timeout)
+            else:
+                raise
