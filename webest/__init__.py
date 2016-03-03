@@ -8,4 +8,5 @@ __copyright__ = 'Copyright 2015 Alvaro Lopez Ortega'
 from . import browser
 from . import dom
 from . import scroll
+from . import history
 from .obj import *
