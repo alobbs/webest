@@ -64,6 +64,19 @@ def wait_for_obj(b, selector, timeout=30):
     return get(b, selector)
 
 
+def wait_for_any_obj(b, selectors, timeout=30):
+    def check_func(b):
+        return any([get(b, s) for s in selectors])
+
+    wait = ui.WebDriverWait(b, timeout)
+    wait.until(check_func)
+
+    for s in selectors:
+        obj = get(b, s)
+        if obj:
+            return obj
+
+
 def wait_while_obj(b, selector, timeout=30):
     wait = ui.WebDriverWait(b, timeout)
     wait.until(lambda driver, s=selector: not get(b, s))
