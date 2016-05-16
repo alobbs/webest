@@ -9,4 +9,5 @@ from . import browser
 from . import dom
 from . import scroll
 from . import history
+from . import screenshot
 from .obj import *
