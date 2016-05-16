@@ -1,3 +1,4 @@
+import contextlib
 import functools
 import glob
 import os
@@ -61,6 +62,13 @@ def get_default_profile_path(check_config_file=True, with_name=None):
     # Set it as default
     set_default_profile_path(path)
     return path
+
+
+@contextlib.contextmanager
+def new_auto(*args, **kwargs):
+    b = new(*args, **kwargs)
+    yield b
+    b.quit()
 
 
 def new(url=None, profile_path=None, is_mobile=False,
