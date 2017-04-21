@@ -7,4 +7,4 @@ def remove_children(b, selector):
 
 def focus(b, selector):
     o = obj.get(b, selector)
-    o.send_keys(Keys.NULL)
+    o.send_keys(Keys.Tab)
