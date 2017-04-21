@@ -102,6 +102,8 @@ def new(url=None, profile_path=None, is_mobile=False,
 
 
 def load(b, url, force=False, retries=3, retry_timeout=60):
+    assert b, "No browser"
+
     if (not force) and (b.current_url == url):
         return
 
