@@ -2,6 +2,7 @@ import contextlib
 import functools
 import glob
 import os
+import platform
 import time
 
 import selenium.common
