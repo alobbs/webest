@@ -6,5 +6,5 @@ def remove_children(b, selector):
     b.execute_script(js)
 
 def focus(b, selector):
-    o = obj.get(b, selector)
-    o.send_keys(Keys.TAB)
+    js = """document.querySelector('%s').focus();""" % (selector)
+    b.execute_script(js)
