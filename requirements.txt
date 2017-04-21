@@ -2,3 +2,4 @@ selenium
 retrying
 Pillow
 ujson
+PyUserInput

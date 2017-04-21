@@ -95,6 +95,20 @@ def new(url=None, profile_path=None, is_mobile=False,
         assert len(size) == 2
         browser.set_window_size(*size)
 
+    # On Linux, the focus of the application is in the address bar
+    # of the browser after it is created. That creates problems while
+    # working with some <input> fields. Moving the focus to the app to
+    # the browser panel solves it.
+    #
+    # 1st Tab moves the focus to search box
+    # 2nd Tab moves it further to the browser content
+    if platform.system() == 'Linux':
+        import pykeyboard
+        k = pykeyboard.PyKeyboard()
+        for n in range(2):
+            k.tap_key('Tab')
+            time.sleep(0.5)
+
     if url:
         browser.get(url)
 
