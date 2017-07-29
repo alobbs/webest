@@ -42,8 +42,9 @@ setup(
     url='https://github.com/alobbs/webest',
     install_requires=requires,
     packages=find_packages(),
-    license='MIT',
     zip_safe=False,
+    scripts=['bin/webest-update'],
+    license='MIT',
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
