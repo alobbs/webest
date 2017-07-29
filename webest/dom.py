@@ -8,3 +8,7 @@ def remove_children(b, selector):
 def focus(b, selector):
     js = """document.querySelector('%s').focus();""" % (selector)
     b.execute_script(js)
+
+def click(b, selector):
+    js = """document.querySelector('%s').click();""" % (selector)
+    b.execute_script(js)
