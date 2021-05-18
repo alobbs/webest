@@ -1,68 +1,9 @@
-import contextlib
-import functools
-import glob
 import os
-import platform
 import time
+import contextlib
 
 import selenium.common
 from selenium import webdriver
-
-
-PROFILE_DIRS = [
-    '~/.mozilla/firefox',
-    '~/Library/Application Support/Firefox/Profiles',
-]
-
-PROFILE_CONF_FILE = "~/.config/webest/firefox_profile"
-
-MOBILE_AGENT = (
-    "Mozilla/5.0 (Android 5.1; Tablet; rv:40.0) Gecko/40.0 Firefox/40.0"
-)
-
-default_profile = None
-
-
-def set_default_profile_path(path):
-    global default_profile
-    assert os.path.exists(path), "Profile doesn't exist"
-    assert os.path.isdir(path), "Profile dir isn't a dir"
-    assert os.path.exists(os.path.join(path, 'prefs.js')), "Not a profile dir"
-    default_profile = path
-
-
-def get_default_profile_path(check_config_file=True, with_name=None):
-    # Has it been set already?
-    if default_profile:
-        return default_profile
-
-    # Configuration file
-    if check_config_file:
-        conf_file = os.path.expanduser(PROFILE_CONF_FILE)
-        if os.path.exists(conf_file):
-            with open(conf_file, 'r') as cf:
-                path = cf.readline().strip()
-                set_default_profile_path(path)
-                return path
-
-    # Read all potential directories
-    globs = [os.path.expanduser(d)+'/*' for d in PROFILE_DIRS]
-    entries = functools.reduce(lambda x, y: x+y, [glob.glob(d) for d in globs])
-
-    # Keep the profile dirs only
-    dirs = [f for f in entries if os.path.exists(os.path.join(f, 'prefs.js'))]
-    assert dirs, "No profile found"
-
-    if with_name:
-        dirs = [f for f in entries if with_name in f]
-        assert dirs, "No profile found with string %s" % with_name
-
-    # Use the newest
-    path = sorted(dirs, key=os.path.getmtime)[0]
-
-    # Set it as default
-    set_default_profile_path(path)
-    return path
 
 
 @contextlib.contextmanager
@@ -72,43 +13,35 @@ def new_auto(*args, **kwargs):
     b.quit()
 
 
-def new(url=None, profile_path=None, is_mobile=False,
-        load_images=True, size=None):
-    # Get path to profile
-    if not profile_path:
-        profile_path = get_default_profile_path()
-
-    assert os.path.isdir(profile_path), "Profile not found"
-
-    # Tweak profile if needed
-    profile = webdriver.FirefoxProfile(profile_path)
-    if not load_images:
-        profile.set_preference('permissions.default.image', 2)
-
-    if is_mobile:
-        profile.set_preference("general.useragent.override", MOBILE_AGENT)
-
-    # Instance new browser window
-    browser = webdriver.Firefox(profile)
+def new(url=None, size=None):
+    PATH_CHROMIUM = "/Applications/Chromium.app/Contents/MacOS/Chromium"
+    
+    # Prefer Chromium over Chrome
+    if os.path.exists(PATH_CHROMIUM):
+        options = webdriver.ChromeOptions()
+        options.binary_location = "/Applications/Chromium.app/Contents/MacOS/Chromium"
+        browser = webdriver.Chrome(chrome_options=options)
+    else:
+        browser = webdriver.Chrome()
 
     if size:
         assert type(size) == tuple
         assert len(size) == 2
         browser.set_window_size(*size)
 
-    # On Linux, the focus of the application is in the address bar
-    # of the browser after it is created. That creates problems while
-    # working with some <input> fields. Moving the focus to the app to
-    # the browser panel solves it.
-    #
-    # 1st Tab moves the focus to search box
-    # 2nd Tab moves it further to the browser content
-    if platform.system() == 'Linux':
-        import pykeyboard
-        k = pykeyboard.PyKeyboard()
-        for n in range(2):
-            k.tap_key('Tab')
-            time.sleep(0.5)
+    # # On Linux, the focus of the application is in the address bar
+    # # of the browser after it is created. That creates problems while
+    # # working with some <input> fields. Moving the focus to the app to
+    # # the browser panel solves it.
+    # #
+    # # 1st Tab moves the focus to search box
+    # # 2nd Tab moves it further to the browser content
+    # if platform.system() == 'Linux':
+    #     import pykeyboard
+    #     k = pykeyboard.PyKeyboard()
+    #     for n in range(2):
+    #         k.tap_key('Tab')
+    #         time.sleep(0.5)
 
     if url:
         browser.get(url)
