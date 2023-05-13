@@ -13,16 +13,28 @@ def new_auto(*args, **kwargs):
     b.quit()
 
 
-def new(url=None, size=None):
+def new(url=None, size=None, load_imgs=True, minimize=False, headless=False):
     PATH_CHROMIUM = "/Applications/Chromium.app/Contents/MacOS/Chromium"
+
+    chrome_options = webdriver.ChromeOptions()
     
+    if headless:
+        chrome_options.headless = True
+
+    # Load Images?
+    if not load_imgs: 
+        chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        chrome_options.add_experimental_option("prefs", prefs)
+
     # Prefer Chromium over Chrome
     if os.path.exists(PATH_CHROMIUM):
-        options = webdriver.ChromeOptions()
-        options.binary_location = "/Applications/Chromium.app/Contents/MacOS/Chromium"
-        browser = webdriver.Chrome(chrome_options=options)
-    else:
-        browser = webdriver.Chrome()
+        chrome_options.binary_location = "/Applications/Chromium.app/Contents/MacOS/Chromium"
+
+    browser = webdriver.Chrome(chrome_options=chrome_options)
+    
+    if minimize:
+        browser.minimize_window()
 
     if size:
         assert type(size) == tuple
