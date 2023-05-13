@@ -1,6 +1,7 @@
 import retrying
 import selenium
 import selenium.webdriver.support.ui as ui
+from selenium.webdriver.common.by import By
 
 from . import exceptions as ex
 
@@ -8,7 +9,7 @@ from . import exceptions as ex
 @retrying.retry(wait_fixed=1000, retry_on_exception=ex.is_retry_exception)
 def get(b, selector, not_found=None):
     try:
-        obj = b.find_element_by_css_selector(selector)
+        obj = b.find_element(By.CSS_SELECTOR, selector)
     except selenium.common.exceptions.NoSuchElementException:
         return not_found
     return obj
@@ -17,7 +18,7 @@ def get(b, selector, not_found=None):
 @retrying.retry(wait_fixed=1000, retry_on_exception=ex.is_retry_exception)
 def get_objs(b, selector, not_found=None):
     try:
-        objs = b.find_elements_by_css_selector(selector)
+        objs = b.find_elements(By.CSS_SELECTOR, selector)
     except selenium.common.exceptions.NoSuchElementException:
         return not_found
     return objs
@@ -26,7 +27,7 @@ def get_objs(b, selector, not_found=None):
 @retrying.retry(wait_fixed=1000, retry_on_exception=ex.is_retry_exception)
 def is_visible(b, selector):
     try:
-        obj = b.find_element_by_css_selector(selector)
+        obj = b.find_element(By.CSS_SELECTOR, selector)
     except selenium.common.exceptions.NoSuchElementException:
         return False
     return obj.is_displayed()
@@ -35,7 +36,7 @@ def is_visible(b, selector):
 @retrying.retry(wait_fixed=1000, retry_on_exception=ex.is_retry_exception)
 def is_enabled(b, selector):
     try:
-        obj = b.find_element_by_css_selector(selector)
+        obj = b.find_element(By.CSS_SELECTOR, selector)
     except selenium.common.exceptions.NoSuchElementException:
         return False
     return obj.is_enabled()
